@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs');
+const BraintreeController  = require('../Controller/BraintreeController');
 
 const UserSchema = mongoose.Schema({
     username: { 
@@ -26,6 +27,7 @@ const UserSchema = mongoose.Schema({
     borderColor: {type: String, default: '#333'},
     image: String,
     fullImage: String,
+    customerId: {type: String, default: ''},
     bio: {type: String, default: null},
     creator: {type: Boolean, default: false},
     likedPosts: [
@@ -38,7 +40,13 @@ const UserSchema = mongoose.Schema({
     creators: [{
         type: String,
         default: null
-    }]
+    }],
+    unlockedPosts: [{
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Post',
+        default: null
+    }],
+    accountLevel: {type: Number, default: 0},
 }, {timestamps: true});
 
 UserSchema.virtual('posts', {
@@ -107,6 +115,7 @@ UserSchema.pre('save', async function (next) {
         user.image = (user.sex === true ? 'male/' : 'female/') + Math.floor(Math.random() * (maxImages - 1) + 1) + '-s.png';
         user.fullImage = (user.sex === true ? 'male/' : 'female/') + Math.floor(Math.random() * (maxImages - 1) + 1) + '.png';
     }
+    user.customerId = await BraintreeController.createCustomer(user.username, user.email);
     next();
 });
 

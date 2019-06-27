@@ -1,4 +1,5 @@
 const User = require('../Model/User');
+const BraintreeController = require('./BraintreeController');
 
 module.exports = {
     async signUp(req, res) {
@@ -8,7 +9,7 @@ module.exports = {
         if (!valid) {
             return res.status(400).send({ error: 'Invalid Fields !' });
         }
-        try {
+        try {   
             const user = await User.create(req.body);
             if (user) {
                 const token = await user.generateAuthToken();
@@ -96,7 +97,7 @@ module.exports = {
                 const stringSearch = req.query.search;
                 let creators = null;
                 if (stringSearch !== '') {
-                    creators = await User.findOne({ creator: true, username: req.query.search.toLowerCase().trim() });
+                    creators = await User.findOne({ creator: true, username: { $regex: new RegExp(stringSearch), $options: 'i' } });
                 } else {
                     creators = await User.find({ creator: true }).skip(parseInt(req.query.offset)).limit(6);
                 }
@@ -181,6 +182,17 @@ module.exports = {
             updates.forEach((update) => user[update] = req.body[update]);
             await user.save();
             return res.send({ user });
+        } catch(error){
+            return res.send({error: error.message});
+        }
+    },
+    async patchUser(req, res){
+        const user = req.user;
+        try {
+            console.log(req.query.post);
+            user.unlockedPosts = user.unlockedPosts.concat(req.query.post);
+            await user.save();
+            return res.send({user});
         } catch(error){
             return res.send({error: error.message});
         }

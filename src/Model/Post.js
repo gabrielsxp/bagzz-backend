@@ -7,9 +7,9 @@ const PostSchema = mongoose.Schema({
     author: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     authorImage: String,
     username: String,
-    accountLevel: {type: Number, default: 0},
+    postValue: {type: Number, default: 1},
     youtubeVideoUrl: {type: String, default: null},
-    category: {type: String, default: 'public'}
+    category: {type: String, default: 'public'},
 }, {timestamps: true});
 
 PostSchema.virtual('comments', {
