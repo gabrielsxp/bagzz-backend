@@ -28,7 +28,7 @@ const UserSchema = mongoose.Schema({
     image: String,
     fullImage: String,
     customerId: {type: String, default: ''},
-    bio: {type: String, default: null},
+    bio: {type: String, default: ''},
     creator: {type: Boolean, default: false},
     likedPosts: [
         {
@@ -46,6 +46,8 @@ const UserSchema = mongoose.Schema({
         ref: 'Post',
         default: null
     }],
+    balance: {type: Number, default: 0},
+    revenue: {type: Number, default: 0},
     accountLevel: {type: Number, default: 0},
 }, {timestamps: true});
 
@@ -112,8 +114,8 @@ UserSchema.pre('save', async function (next) {
         user.password = await bcrypt.hash(user.password, 8);
     }
     if (user.isModified('sex')) {
-        user.image = (user.sex === true ? 'male/' : 'female/') + Math.floor(Math.random() * (maxImages - 1) + 1) + '-s.png';
-        user.fullImage = (user.sex === true ? 'male/' : 'female/') + Math.floor(Math.random() * (maxImages - 1) + 1) + '.png';
+        user.image = (user.sex === true ? 'assets/male/' : 'assets/female/') + Math.floor(Math.random() * (maxImages - 1) + 1) + '-s.png';
+        user.fullImage = (user.sex === true ? 'assets/male/' : 'assets/female/') + Math.floor(Math.random() * (maxImages - 1) + 1) + '.png';
     }
     user.customerId = await BraintreeController.createCustomer(user.username, user.email);
     next();

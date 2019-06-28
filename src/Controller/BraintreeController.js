@@ -34,7 +34,7 @@ module.exports = {
             if(err){
                 return res.send(err);
             } else {
-                console.log(paymentMethodNonce);
+                console.log(paymentMethodNonce); 
                 if(paymentMethodNonce.type === 'notFoundError'){
                     console.log('error not found method');
                     gateway.paymentMethod.create({
@@ -51,25 +51,26 @@ module.exports = {
                             return res.send(result);
                         });
                 } else {
-                    console.log('Enter transaction section ' +  parseFloat(req.query.value).toFixed(2).toString());
-                    gateway.transaction.sale({
-                        amount: '1.00',
-                        paymentMethodNonce: paymentMethodNonce.nonce,
-                        options: {
-                            submitForSettlement: true
-                        }
-                      }, (err, result) => {
-                        console.log('Result.success: ' + result.success);
-                        if (result.success) {
-                        console.log('payment success ');
-                          return res.send({success: true});
-                        } else {
-                          console.log('payment error');
-                          return res.send({success: false});
-                        }
-                    });
+                    return res.send(paymentMethodNonce.nonce);
                 }
             }
         }); 
+    },
+    completePayment(req, res){
+        gateway.transaction.sale({
+            amount: parseFloat(req.query.value).toFixed(2).toString(),
+            paymentMethodNonce: req.params.nonce,
+            options: {
+                submitForSettlement: true
+            }}, (err, result) => {
+            console.log('Result.success: ' + result.success);
+            if (result.success) {
+            console.log('payment success ');
+                return res.send({success: true});
+            } else {
+                console.log('payment error');
+                return res.send({success: false});
+            }
+        });
     }
 }
