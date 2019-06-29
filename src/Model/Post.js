@@ -10,6 +10,9 @@ const PostSchema = mongoose.Schema({
     username: String,
     postValue: {type: Number, default: 1},
     youtubeVideoUrl: {type: String, default: null},
+    fullImage: {type: String, default: null},
+    image: {type: String, default: null},
+    imageDescription: {type: String, defaut: null}, 
     category: {type: String, default: 'public'},
 }, {timestamps: true});
 

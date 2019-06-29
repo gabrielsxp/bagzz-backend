@@ -26,7 +26,8 @@ router.get('/creators', UserController.getCreators);
 router.post('/fakeData', UserController.fakeUsers);
 
 router.get('/profile/:user/posts', PostController.userPosts);
-router.post('/posts', auth, PostController.store);
+router.post('/posts', [auth, upload.single('file')], PostController.store);
+router.get('/posts/:postId', auth, PostController.getPost);
 router.patch('/user', auth, UserController.patchUser);
 router.get('/posts', auth, PostController.index);
 router.patch('/posts/:id/like', auth, PostController.likePost);

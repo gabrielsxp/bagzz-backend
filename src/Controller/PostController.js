@@ -1,10 +1,38 @@
 const Post = require('../Model/Post');
+const path = require('path');
+const fs = require('fs');
+const sharp = require('sharp');
+
+function hashCode(str) {
+    return str.split('').reduce((prevHash, currVal) =>
+      (((prevHash << 5) - prevHash) + currVal.charCodeAt(0))|0, 0);
+}
 
 module.exports = {
     async store(req, res) {
         const user = req.user;
         try {
-            const post = await Post.create({...req.body});
+            let fileName = null;
+            if(req.file){
+                const {filename: image} = req.file;
+                const [name] = image.split('.');
+                const hash = hashCode(name);
+                fileName = `${user._id + hash}.png`;
+                await sharp(req.file.path)
+                    .resize(1280, 1024)
+                    .png()
+                    .toFile(
+                        path.resolve(req.file.destination, 'resized' , fileName)
+                    );
+                await sharp(req.file.path)
+                    .resize(480, 360)
+                    .png()
+                    .toFile(
+                        path.resolve(req.file.destination, 'mini', fileName)
+                    );
+                fs.unlinkSync(req.file.path);
+            }
+            const post = await Post.create({...req.body, image: `uploads/mini/${fileName}`, fullImage: `uploads/resized/${fileName}`});
             if (!post) {
                 return res.status(400).send({ error: 'Something went wrong on creation of the post !' });
             }
@@ -53,6 +81,18 @@ module.exports = {
             return res.send({ post, user });
         } catch (error) {
             return res.send({ error });
+        }
+    },
+    async getPost(req, res){
+        try {
+            console.log(req.params);
+            const post = await Post.findById(req.params.postId);
+            if(!post){
+                return res.status(404).send({error: 'Post not found'});
+            }
+            return res.send({post});
+        } catch(error){
+            return res.send({error: error.message});
         }
     },
     async unlikePost(req, res) {
