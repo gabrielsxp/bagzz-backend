@@ -5,7 +5,7 @@ const sharp = require('sharp');
 
 function hashCode(str) {
     return str.split('').reduce((prevHash, currVal) =>
-      (((prevHash << 5) - prevHash) + currVal.charCodeAt(0))|0, 0);
+        (((prevHash << 5) - prevHash) + currVal.charCodeAt(0)) | 0, 0);
 }
 
 module.exports = {
@@ -13,8 +13,8 @@ module.exports = {
         const user = req.user;
         try {
             let fileName = null;
-            if(req.file){
-                const {filename: image} = req.file;
+            if (req.file) {
+                const { filename: image } = req.file;
                 const [name] = image.split('.');
                 const hash = hashCode(name);
                 fileName = `${user._id + hash}.png`;
@@ -22,7 +22,7 @@ module.exports = {
                     .resize(1280, 1024)
                     .png()
                     .toFile(
-                        path.resolve(req.file.destination, 'resized' , fileName)
+                        path.resolve(req.file.destination, 'resized', fileName)
                     );
                 await sharp(req.file.path)
                     .resize(480, 360)
@@ -32,7 +32,7 @@ module.exports = {
                     );
                 fs.unlinkSync(req.file.path);
             }
-            const post = await Post.create({...req.body, image: `uploads/mini/${fileName}`, fullImage: `uploads/resized/${fileName}`});
+            const post = await Post.create({ ...req.body, image: `uploads/mini/${fileName}`, fullImage: `uploads/resized/${fileName}` });
             if (!post) {
                 return res.status(400).send({ error: 'Something went wrong on creation of the post !' });
             }
@@ -62,7 +62,7 @@ module.exports = {
         console.log(req.query);
         try {
             const posts = await Post.find({ username: req.params.user, category: req.query.category }).limit(6).skip(parseInt(req.query.offset)).sort('-updatedAt');
-            const allPosts = await Post.find({username: req.params.user, category: req.query.category });
+            const allPosts = await Post.find({ username: req.params.user, category: req.query.category });
             return res.send({ posts, limit: parseInt(req.query.offset) + 6 >= allPosts.length });
         } catch (error) {
             console.log(error);
@@ -83,16 +83,68 @@ module.exports = {
             return res.send({ error });
         }
     },
-    async getPost(req, res){
+    async getPost(req, res) {
         try {
-            console.log(req.params);
             const post = await Post.findById(req.params.postId);
-            if(!post){
-                return res.status(404).send({error: 'Post not found'});
+            if (!post) {
+                return res.status(404).send({ error: 'Post not found' });
             }
-            return res.send({post});
-        } catch(error){
-            return res.send({error: error.message});
+            return res.send({ post });
+        } catch (error) {
+            return res.send({ error: error.message });
+        }
+    },
+    async editPost(req, res) {
+        try {
+            const post = await Post.findById(req.params.id);
+            if (!post) {
+                return res.status(404).send({ error: 'Post not found' });
+            }
+            let fileName = null;
+            if (req.file) {
+                const { filename: image } = req.file;
+                const [name] = image.split('.');
+                const hash = hashCode(name);
+                fileName = `${req.user._id + hash}.png`;
+                await sharp(req.file.path)
+                    .resize(1280, 1024)
+                    .png()
+                    .toFile(
+                        path.resolve(req.file.destination, 'resized', fileName)
+                    );
+                await sharp(req.file.path)
+                    .resize(480, 360)
+                    .png()
+                    .toFile(
+                        path.resolve(req.file.destination, 'mini', fileName)
+                    );
+                fs.unlinkSync(req.file.path);
+            }
+            const changes = Object.keys(req.body);
+            changes.forEach(update => post[update] = req.body[update]);
+            post.image = `uploads/mini/${fileName}`;
+            post.fullImage =  `uploads/resized/${fileName}`;
+
+            await post.save();
+            return res.send({ post });
+        } catch (error) {
+            console.log(error);
+            return res.send({ error: error.message });
+        }
+    },
+    async deletePost(req, res) {
+        try {
+            const index = req.user.likedPosts.findIndex((post) => post._id === req.params.id);
+            if (index) {
+                req.user.likedPosts.splice(index, 1);
+            }
+            await Post.findByIdAndDelete(req.params.id);
+            req.user.numberOfPosts--;
+            await req.user.save();
+            return res.sendStatus(200);
+        } catch (error) {
+            console.log(error);
+            return res.send({ error: error.message });
         }
     },
     async unlikePost(req, res) {
@@ -103,9 +155,7 @@ module.exports = {
             const likedPosts = user.likedPosts;
 
             post.likes = post.likes - 1;
-            console.log(likedPosts);
             const index = likedPosts.findIndex((element) => element == idPost);
-            console.log(index);
             user.likedPosts.splice(index, 1);
             await user.save();
             await post.save();
