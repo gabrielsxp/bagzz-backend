@@ -5,6 +5,7 @@ const UserController = require('../Controller/UserController');
 const PostController = require('../Controller/PostController');
 const BraintreeController = require('../Controller/BraintreeController');
 const TransactionController = require('../Controller/TransactionController');
+const BundleController = require('../Controller/BundleController');
 const multer = require('multer');
 
 const uploadConfig = require('../config/config');
@@ -26,6 +27,7 @@ router.post('/fakeData', UserController.fakeUsers);
 router.post('/subscribe', auth, UserController.subscribe);
 router.post('/unsubscribe', auth, UserController.unsubscribe);
 router.post('/posts', [auth, upload.single('file')], PostController.store);
+router.get('/posts/:category', auth, PostController.getAllPosts);
 router.patch('/posts/:id', [auth, upload.single('file')], PostController.editPost);
 router.delete('/posts/:id', auth, PostController.deletePost);
 router.get('/posts/:postId', auth, PostController.getPost);
@@ -40,4 +42,7 @@ router.post('/purchase/complete/:nonce', auth, BraintreeController.completePayme
 
 router.get('/transactions', auth, TransactionController.index);
 router.get('/transactions/date', TransactionController.indexByDate);
+
+router.post('/bundle', auth, BundleController.store);
+
 module.exports = router;

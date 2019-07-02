@@ -69,6 +69,14 @@ module.exports = {
             return res.status(500).send({ error });
         }
     },
+    async getAllPosts(req, res) {
+        try {
+            const posts = await Post.find({ username:req.user.username, category: `${req.params.category}`})
+            return res.send({posts});
+        } catch(error){
+            return res.send({error: error.message});
+        }
+    },
     async likePost(req, res) {
         const idPost = req.params.id;
         const user = req.user;
