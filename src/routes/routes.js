@@ -27,10 +27,10 @@ router.post('/fakeData', UserController.fakeUsers);
 router.post('/subscribe', auth, UserController.subscribe);
 router.post('/unsubscribe', auth, UserController.unsubscribe);
 router.post('/posts', [auth, upload.single('file')], PostController.store);
-router.get('/posts/:category', auth, PostController.getAllPosts);
+router.get('/posts/filter/:category', auth, PostController.getAllPosts);
+router.get('/posts/:postId', auth, PostController.getPost);
 router.patch('/posts/:id', [auth, upload.single('file')], PostController.editPost);
 router.delete('/posts/:id', auth, PostController.deletePost);
-router.get('/posts/:postId', auth, PostController.getPost);
 router.patch('/posts/:id/like', auth, PostController.likePost);
 router.patch('/posts/:id/unlike', auth, PostController.unlikePost);
 router.get('/profile/:user/posts', PostController.userPosts);
@@ -43,6 +43,9 @@ router.post('/purchase/complete/:nonce', auth, BraintreeController.completePayme
 router.get('/transactions', auth, TransactionController.index);
 router.get('/transactions/date', TransactionController.indexByDate);
 
-router.post('/bundle', auth, BundleController.store);
+router.post('/bundles', auth, BundleController.store);
+router.get('/bundles', auth, BundleController.index);
+router.patch('/bundles/:id', auth, BundleController.update);
+router.delete('/bundles/:id', auth, BundleController.delete);
 
 module.exports = router;

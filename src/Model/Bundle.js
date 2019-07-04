@@ -8,6 +8,7 @@ const BundleSchema = mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId, ref: 'Post'
         }
     ],
+    active: {type: Boolean, default: false},
     owner: {type: mongoose.Schema.Types.ObjectId, red: 'User'},
     discount: {type: Number, defaut: 0}
 });
