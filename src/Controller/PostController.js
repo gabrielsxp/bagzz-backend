@@ -59,7 +59,6 @@ module.exports = {
         }
     },
     async userPosts(req, res) {
-        console.log(req.query);
         try {
             const posts = await Post.find({ username: req.params.user, category: req.query.category }).limit(6).skip(parseInt(req.query.offset)).sort('-updatedAt');
             const allPosts = await Post.find({ username: req.params.user, category: req.query.category });

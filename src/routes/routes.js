@@ -41,7 +41,7 @@ router.post('/purchase/:nonce', auth, BraintreeController.createPaymentMethod);
 router.post('/purchase/complete/:nonce', auth, BraintreeController.completePayment);
 
 router.get('/transactions', auth, TransactionController.index);
-router.get('/transactions/date', TransactionController.indexByDate);
+router.get('/revenue', auth, TransactionController.revenueIndex);
 
 router.post('/bundles', auth, BundleController.store);
 router.get('/bundles', auth, BundleController.index);
