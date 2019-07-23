@@ -6,6 +6,7 @@ const PostController = require('../Controller/PostController');
 const BraintreeController = require('../Controller/BraintreeController');
 const TransactionController = require('../Controller/TransactionController');
 const BundleController = require('../Controller/BundleController');
+const CommentController = require('../Controller/CommentController');
 const multer = require('multer');
 
 const uploadConfig = require('../config/config');
@@ -33,6 +34,9 @@ router.patch('/posts/:id', [auth, upload.single('file')], PostController.editPos
 router.delete('/posts/:id', auth, PostController.deletePost);
 router.patch('/posts/:id/like', auth, PostController.likePost);
 router.patch('/posts/:id/unlike', auth, PostController.unlikePost);
+router.post('/posts/:id/comment', auth, CommentController.comment);
+router.get('/posts/:id/comments', auth, CommentController.index);
+router.delete('/posts/:id/comments/:commentId', auth, CommentController.delete);
 router.get('/profile/:user/posts', PostController.userPosts);
 router.get('/posts', auth, PostController.index);
 
@@ -47,5 +51,7 @@ router.post('/bundles', auth, BundleController.store);
 router.get('/bundles', auth, BundleController.index);
 router.patch('/bundles/:id', auth, BundleController.update);
 router.delete('/bundles/:id', auth, BundleController.delete);
+
+
 
 module.exports = router;

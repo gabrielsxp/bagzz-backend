@@ -1,4 +1,5 @@
 const User = require('../Model/User');
+const Post = require('../Model/Post');
 const TransactionController = require('./TransactionController');
 const path = require('path');
 const sharp = require('sharp');
@@ -6,7 +7,7 @@ const fs = require('fs');
 
 function hashCode(str) {
     return str.split('').reduce((prevHash, currVal) =>
-      (((prevHash << 5) - prevHash) + currVal.charCodeAt(0))|0, 0);
+        (((prevHash << 5) - prevHash) + currVal.charCodeAt(0)) | 0, 0);
 }
 
 module.exports = {
@@ -17,7 +18,7 @@ module.exports = {
         if (!valid) {
             return res.status(400).send({ error: 'Invalid Fields !' });
         }
-        try {   
+        try {
             const user = await User.create(req.body);
             if (user) {
                 const token = await user.generateAuthToken();
@@ -130,7 +131,7 @@ module.exports = {
             } else {
                 creators = await User.find({ creator: true }).skip(parseInt(req.query.offset)).limit(6).sort('-subscriptions');
                 //creators.map((creator) => console.log(creator.username));
-                return res.send({ creators, limit: (total <= parseInt(req.query.offset) + 6)});
+                return res.send({ creators, limit: (total <= parseInt(req.query.offset) + 6) });
             }
         } catch (error) {
             console.log(error);
@@ -163,7 +164,7 @@ module.exports = {
             user.creators.splice(index, 1);
 
             creator.subscriptions = creator.subscriptions - 1;
-            
+
             await user.save();
             await creator.save();
 
@@ -185,22 +186,25 @@ module.exports = {
         }
     },
     async updateUserProfile(req, res) {
+        console.log('entrei aqui nego')
         try {
-            
+
             const user = await User.findOne({ username: req.params.user });
+            const posts = await Post.find({ username: req.params.user });
             const updates = Object.keys(req.body);
             updates.forEach((update) => user[update] = req.body[update]);
 
-            if(req.file){
-                const {filename: image} = req.file;
+            if (req.file) {
+                const { filename: image } = req.file;
                 const [name] = image.split('.');
                 const hash = hashCode(name);
                 const fullImage = `${req.user.username + hash}.png`;
+                console.log(fullImage);
                 await sharp(req.file.path)
                     .resize(180, 180)
                     .png()
                     .toFile(
-                        path.resolve(req.file.destination, 'resized' , fullImage)
+                        path.resolve(req.file.destination, 'resized', fullImage)
                     );
                 await sharp(req.file.path)
                     .resize(60, 60)
@@ -211,15 +215,23 @@ module.exports = {
                 fs.unlinkSync(req.file.path);
                 user.fullImage = `uploads/resized/${fullImage}`;
                 user.image = `uploads/mini/${fullImage}`;
+                if (posts.length > 0) {
+                    for (const post of posts) {
+                        console.log(post);
+                        post.authorImage = `uploads/mini/${fullImage}`;
+                        await post.save();
+                    }
+                }
             }
-            
+
             await user.save();
             return res.send({ user });
-        } catch(error){
-            return res.send({error: error.message});
+        } catch (error) {
+            console.log(error);
+            return res.send({ error: error.message });
         }
     },
-    async patchUser(req, res){
+    async patchUser(req, res) {
         const user = req.user;
         try {
             user.unlockedPosts = user.unlockedPosts.concat(req.query.post);
@@ -229,10 +241,10 @@ module.exports = {
             postNames.push(req.body.productNames);
             await TransactionController.store(req.user._id, req.user.username, req.user.email, req.body.sellerId, req.body.sellerUsername, req.body.sellerEmail, req.body.amount, post, postNames);
             await user.save();
-            return res.send({user});
-            
-        } catch(error){
-            return res.send({error: error.message});
+            return res.send({ user });
+
+        } catch (error) {
+            return res.send({ error: error.message });
         }
     }
 }

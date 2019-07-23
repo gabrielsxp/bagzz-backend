@@ -2,6 +2,7 @@ const Post = require('../Model/Post');
 const path = require('path');
 const fs = require('fs');
 const sharp = require('sharp');
+const moment = require('moment');
 
 function hashCode(str) {
     return str.split('').reduce((prevHash, currVal) =>
@@ -50,6 +51,9 @@ module.exports = {
         try {
             for (let i = 0; i < creators.length; i++) {
                 const posts = await Post.find({ username: creators[i], category: req.query.category }).sort('-createdAt');
+                for(const post of posts){
+                    post.relative = moment(post.createdAt).format('MMM DD');
+                }
                 allPosts = allPosts.concat(posts);
             }
             const posts = allPosts.filter(post => post.category === req.query.category).splice(parseInt(req.query.offset), 6);
@@ -93,6 +97,8 @@ module.exports = {
     async getPost(req, res) {
         try {
             const post = await Post.findById(req.params.postId);
+            post.relative = moment(post.createdAt).format('MMM DD');
+            post.relativeUpdated = moment(post.updatedAt).format('MMM DD');
             if (!post) {
                 return res.status(404).send({ error: 'Post not found' });
             }
