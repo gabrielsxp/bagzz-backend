@@ -63,3 +63,4 @@ visualizar todos os dados da mesma na Dashboard
 - BRAIN_TREE_MERCHANTID
 - BRAIN_TREE_PUBLICKEY
 - BRAIN_TREE_PRIVATEKEY
+# begzz-api
