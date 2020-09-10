@@ -6,7 +6,7 @@ require('./db/mongoose');
 const routes = require('./routes/routes');
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());

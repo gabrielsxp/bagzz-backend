@@ -1,4 +1,6 @@
 const Product = require('../Model/Product');
+const Category = require('../Model/Category');
+const mongoose = require('mongoose');
 
 const globalReturn = {
   error: 0,
@@ -18,6 +20,7 @@ module.exports = {
       'y',
       'z',
       'mainImage',
+      'category',
       'images'
     ];
     const body = req.body;
@@ -49,6 +52,24 @@ module.exports = {
       return res.status(500).send({ ...globalReturn, error: 1, data: { error: 'Unable to get the products list right now' } });
     }
   },
+  async indexByCategory(req, res) {
+    try {
+      const categoryFound = await Category.findOne({ name: req.params.category });
+      console.log(categoryFound);
+      if (categoryFound) {
+        const products = await Product.find({ active: 1, category: categoryFound._id }).limit(parseInt(req.query.limit)).skip(parseInt((req.query.limit) * (req.query.page - 1))).sort('-updatedAt');
+        console.log('Products found:', products.length)
+        if (products) {
+          return res.status(200).send({ ...globalReturn, data: { products, total: products.length } });
+        }
+      } else {
+        return res.status(404).send({ ...globalReturn, error: 1, data: { error: 'Category not found !' } });
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({ ...globalReturn, error: 1, data: { error: 'Unable to get the products list right now' } });
+    }
+  },
   async getOne(req, res) {
     try {
       const product = await Product.findById(req.params.id);
@@ -62,6 +83,25 @@ module.exports = {
     }
   },
   async change(req, res) {
+    const validator = [
+      'active',
+      'name',
+      'description',
+      'style',
+      'price',
+      'weight',
+      'x',
+      'y',
+      'z',
+      'mainImage',
+      'category',
+      'images'
+    ];
+    const body = req.body;
+    const valid = Object.keys(body).every(key => validator.includes(key))
+    if (!valid) {
+      return res.status(400).send({ ...globalReturn, error: 1, data: { error: 'Invalid fields' } })
+    }
     try {
       const product = await Product.findById(req.params.id);
       if (!product) {

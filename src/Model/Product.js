@@ -1,20 +1,25 @@
 const mongoose = require('mongoose');
 
-const PostSchema = mongoose.Schema({
-    name: String,
-    descript: String,
-    style: String,
-    price: String,
-    weight: Number,
-    x: Number,
-    y: Number,
-    z: Number,
-    mainImage: String,
-    active: {
-        type: Number,
-        default: 1
-    },
-    images: [String]
+const ProductSchema = mongoose.Schema({
+  name: String,
+  descript: String,
+  style: String,
+  price: String,
+  weight: Number,
+  x: Number,
+  y: Number,
+  z: Number,
+  mainImage: String,
+  active: {
+    type: Number,
+    default: 1
+  },
+  images: [String],
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+    default: null
+  }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Post', PostSchema);
+module.exports = mongoose.model('Product', ProductSchema);
