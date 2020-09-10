@@ -5,7 +5,7 @@ console.log('begzz emv')
 console.log(process.NODE_ENV)
 
 if (process.env.NODE_ENV === 'production') {
-  mongoose.connect(`mongodb://${process.env.MONGOOSE_DB_USER}:${process.env.MONGOOSE_DB_PASSWORD}@${process.env.MONGOOSE_DB_URL}/begzz`, {
+  mongoose.connect(`mongodb://${process.env.MONGOOSE_DB_USER}:${process.env.MONGOOSE_DB_PASSWORD}@mongo_kofastools:27017/kofastools`, {
     useNewUrlParser: true,
     useCreateIndex: true
   });
