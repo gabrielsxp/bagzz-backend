@@ -6,6 +6,9 @@ const ProductController = require('../Controller/ProductController');
 const CategoryController = require('../Controller/CategoryController');
 const StockController = require('../Controller/StockController');
 const BannerController = require('../Controller/BannerController');
+const ProductSizeController = require('../Controller/ProductSizeController');
+const ProductColorController = require('../Controller/ProductColorController');
+const AddressController = require('../Controller/AddressController');
 const multer = require('multer');
 const uploadConfig = require('../config/config');
 const upload = multer(uploadConfig);
@@ -24,6 +27,27 @@ router.get('/product/:id', ProductController.getOne);
 router.get('/products/:category', ProductController.indexByCategory);
 router.delete('/product/:id', ProductController.remove);
 router.delete('/products', ProductController.clear);
+// Product Size
+router.post('/product-size', ProductSizeController.create);
+router.put('/product-size/:id', ProductSizeController.change);
+router.get('/product-sizes', ProductSizeController.index);
+router.get('/product-size/:id', ProductSizeController.getOne);
+router.delete('/product-size/:id', ProductSizeController.remove);
+router.delete('/product-sizes', ProductSizeController.clear);
+// Product Color
+router.post('/product-color', ProductColorController.create);
+router.put('/product-color/:id', ProductColorController.change);
+router.get('/product-colors', ProductColorController.index);
+router.get('/product-color/:id', ProductColorController.getOne);
+router.delete('/product-color/:id', ProductColorController.remove);
+router.delete('/product-colors', ProductColorController.clear);
+// Product Color
+router.post('/address', auth, AddressController.create);
+router.put('/address/:id', auth, AddressController.change);
+router.get('/addresses', auth, AddressController.index);
+router.get('/address/:id', auth, AddressController.getOne);
+router.delete('/address/:id', auth, AddressController.remove);
+router.delete('/addresses', auth, AddressController.clear);
 // Categories
 router.post('/category', CategoryController.create);
 router.put('/category/:id', CategoryController.change);
@@ -45,6 +69,9 @@ router.get('/banners', BannerController.index);
 router.get('/banner/:id', BannerController.getOne);
 router.delete('/banner/:id', BannerController.remove);
 router.delete('/banners', BannerController.clear);
-
+// Favorites
+router.post('/favorites/:id', auth, UserController.addToFavorites)
+router.delete('/favorites/:id', auth, UserController.removeFavorite)
+router.get('/favorites', auth, UserController.getListOfFavorites)
 
 module.exports = router;

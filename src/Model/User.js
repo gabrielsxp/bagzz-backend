@@ -21,11 +21,18 @@ const UserSchema = mongoose.Schema({
   favorites: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Post',
+      ref: 'Product',
       default: null
     }
   ]
 }, { timestamps: true });
+
+UserSchema.virtual('favorites_', {
+  ref: 'Product',
+  localField: 'favorites',
+  foreignField: '_id'
+});
+
 
 UserSchema.methods.toJSON = function () {
   const user = this;

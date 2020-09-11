@@ -11,6 +11,8 @@ module.exports = {
   async create(req, res) {
     const validator = [
       'product',
+      'color',
+      'size',
       'amount'
     ];
     const body = req.body;
@@ -44,7 +46,19 @@ module.exports = {
   async index(req, res) {
     try {
       console.log(req.query.page);
-      const stocks = await Stock.find({}).limit(parseInt(req.query.limit)).skip(parseInt((req.query.limit) * (req.query.page - 1))).sort('-updatedAt');
+      const stocks = await Stock.find({}).populate('product').populate('size').populate('color').limit(parseInt(req.query.limit)).skip(parseInt((req.query.limit) * (req.query.page - 1))).sort('-updatedAt').exec();
+      console.log('Stocks found:', stocks.length)
+      if (stocks) {
+        return res.status(200).send({ ...globalReturn, data: { stocks, total: stocks.length } });
+      }
+    } catch (error) {
+      return res.status(500).send({ ...globalReturn, error: 1, data: { error: 'Unable to get the stocks list right now' } });
+    }
+  },
+  async indexOfProduct(req, res) {
+    try {
+      console.log(req.query.page);
+      const stocks = await Stock.find({ product: mongoose.Types.ObjectId(req.query.product) }).populate('product').populate('size').populate('color').limit(parseInt(req.query.limit)).skip(parseInt((req.query.limit) * (req.query.page - 1))).sort('-updatedAt').exec();
       console.log('Stocks found:', stocks.length)
       if (stocks) {
         return res.status(200).send({ ...globalReturn, data: { stocks, total: stocks.length } });
@@ -55,19 +69,22 @@ module.exports = {
   },
   async getOne(req, res) {
     try {
-      const stock = await Stock.findById(req.params.id);
-      if (product) {
+      const stock = await Stock.findById(req.params.id).populate('product').populate('size').populate('color').exec();
+      if (stock) {
         return res.status(200).send({ ...globalReturn, data: { stock } });
       } else {
         return res.status(404).send({ ...globalReturn, data: { error: 'This stock does not exists' } });
       }
     } catch (error) {
+      console.log(error);
       return res.status(500).send({ ...globalReturn, error: 1, data: { error: 'Unable to get this stock' } });
     }
   },
   async change(req, res) {
     const validator = [
       'product',
+      'color',
+      'size',
       'amount'
     ];
     const body = req.body;

@@ -1,6 +1,8 @@
 const User = require('../Model/User');
 const path = require('path');
 const fs = require('fs');
+const Product = require('../Model/Product');
+const mongoose = require('mongoose');
 
 var cloudinary = require('cloudinary').v2;
 
@@ -41,6 +43,53 @@ module.exports = {
       }
     } catch (error) {
       return res.status(400).send({ data: { ...globalResponse, error: 1, data: { error: error } } });
+    }
+  },
+  async addToFavorites(req, res) {
+    let id = req.params.id;
+    try {
+      const product = await Product.findById(id);
+      if (product) {
+        const user = req.user;
+        let index = req.user.favorites.findIndex(p => p === mongoose.Types.ObjectId(req.params.id));
+        if (index >= 0) {
+          return res.status(201).send({ ...globalResponse, data: { success: true } })
+        } else {
+          req.user.favorites.push(mongoose.Types.ObjectId(req.params.id));
+          await req.user.save();
+          return res.status(201).send({ ...globalResponse, data: { success: true } });
+        }
+      } else {
+        return res.status(404).send({ ...globalResponse, error: 1, data: { error: 'This product does not exists' } });
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({ ...globalResponse, error: 1, data: { error: 'Unable to add this favorite right now' } });
+    }
+  },
+  async removeFavorite(req, res) {
+    try {
+      let favorites = req.user.favorites;
+      const index = favorites.findIndex(p => p === mongoose.Types.ObjectId(req.params.id));
+      if (index >= 0) {
+        let favorites = req.user.favorites.splice(index, 1);
+        req.user.favorites = favorites;
+        await req.user.save();
+
+        return res.status(200).send({ ...globalResponse, data: { success: true } });
+      } else {
+        return res.status(200).send({ ...globalResponse, data: { success: true } });
+      }
+    } catch (error) {
+      return res.status(500).send({ ...globalResponse, error: 1, data: { error: 'Unable to remove this favorite right now' } });
+    }
+  },
+  async getListOfFavorites(req, res) {
+    try {
+      await req.user.populate('favorites').execPopulate();
+      return res.status(200).send({ ...globalResponse, data: { favorites: req.user.favorites } });
+    } catch (error) {
+      return res.status(500).send({ ...globalResponse, error: 1, data: { error: 'Unable to get the list of favorites right now !' } });
     }
   },
   async signIn(req, res) {

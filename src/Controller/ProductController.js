@@ -1,6 +1,5 @@
 const Product = require('../Model/Product');
 const Category = require('../Model/Category');
-const mongoose = require('mongoose');
 
 const globalReturn = {
   error: 0,
