@@ -9,6 +9,7 @@ const BannerController = require('../Controller/BannerController');
 const ProductSizeController = require('../Controller/ProductSizeController');
 const ProductColorController = require('../Controller/ProductColorController');
 const AddressController = require('../Controller/AddressController');
+const ShoppingChartController = require('../Controller/ShoppingChartController');
 const multer = require('multer');
 const uploadConfig = require('../config/config');
 const upload = multer(uploadConfig);
@@ -73,5 +74,7 @@ router.delete('/banners', BannerController.clear);
 router.post('/favorites/:id', auth, UserController.addToFavorites)
 router.delete('/favorites/:id', auth, UserController.removeFavorite)
 router.get('/favorites', auth, UserController.getListOfFavorites)
-
+// Shopping Sharts
+router.put('/shopping-chart/:id', auth, ShoppingChartController.change);
+router.get('/shopping-chart', auth, ShoppingChartController.index);
 module.exports = router;

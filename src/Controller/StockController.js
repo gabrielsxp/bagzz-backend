@@ -13,28 +13,20 @@ module.exports = {
       'product',
       'color',
       'size',
-      'amount'
+      'amount',
+      'images'
     ];
     const body = req.body;
     const valid = Object.keys(body).every(key => validator.includes(key))
     if (valid) {
       const validProduct = await Product.findById(req.body.product);
       if (validProduct) {
-        const alreadyExistsStock = await Stock.findOne({ product: validProduct._id })
-        if (alreadyExistsStock) {
-          return res.status(400).send({ ...globalReturn, error: 1, data: { error: 'A stock for this product already exists !' } });
+        const cannotCreate = await Stock.findOne({ product: validProduct, color: req.body.color, size: req.body.size });
+        if (cannotCreate) {
+          return res.status(400).send({ ...globalReturn, error: 1, data: { error: 'A stock for this product already exists with this color and size !' } });
         } else {
-          try {
-            const stock = await Stock.create(req.body);
-            if (stock) {
-              return res.status(201).send({ ...globalReturn, error: 0, data: { stock } });
-            } else {
-              return res.status(500).send({ ...globalReturn, error: 1, data: { error: 'Unable to create this project right now' } });
-            }
-          } catch (error) {
-            console.log(error);
-            return res.status(500).send({ ...globalReturn, error: 1, data: { error } });
-          }
+          const stock = await Stock.create(req.body);
+          return res.status(201).send({ ...globalReturn, data: { stock } });
         }
       } else {
         return res.status(400).send({ ...globalReturn, error: 1, data: { error: 'This product does not exists' } });
@@ -85,7 +77,8 @@ module.exports = {
       'product',
       'color',
       'size',
-      'amount'
+      'amount',
+      'images'
     ];
     const body = req.body;
     const valid = Object.keys(body).every(key => validator.includes(key))

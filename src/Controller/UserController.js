@@ -1,4 +1,5 @@
 const User = require('../Model/User');
+const ShoppingChart = require('../Model/ShoppingChart');
 const path = require('path');
 const fs = require('fs');
 const Product = require('../Model/Product');
@@ -37,6 +38,9 @@ module.exports = {
       if (user) {
         const token = await user.generateAuthToken();
         let data = { ...globalResponse, data: { user, token } }
+        // criar e vincular carrinho ao cliente
+        const sc = await ShoppingChart.create({ products: [], totalPrice: 0, user: user._id });
+        console.log(sc);
         return res.status(201).send({ data });
       } else {
         return res.status(400).send({ error: 'This email are already in use' });

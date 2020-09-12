@@ -20,6 +20,10 @@ const StockSchema = mongoose.Schema({
     ref: 'ProductSize',
     default: null
   },
+  images: {
+    type: [String],
+    default: []
+  }
 }, { timestamps: true });
 
 StockSchema.virtual('product_', {
