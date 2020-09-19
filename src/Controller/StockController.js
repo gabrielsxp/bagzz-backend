@@ -87,13 +87,13 @@ module.exports = {
     }
     try {
       const stock = await Stock.findById(req.params.id);
-      if (!product) {
+      if (!stock) {
         return res.status(404).send({ ...globalReturn, error: 1, data: { error: 'Unable to find this stockindex' } });
       }
       const changes = Object.keys(req.body);
-      changes.forEach(update => product[update] = req.body[update]);
+      changes.forEach(update => stock[update] = req.body[update]);
 
-      await product.save();
+      await stock.save();
       return res.send({ ...globalReturn, data: { stock } });
     } catch (error) {
       console.log(error);

@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 
 const CategorySchema = mongoose.Schema({
   name: String,
+  uri: {
+    type: String,
+    required: true,
+    unique: true
+  },
   image: String,
   active: {
     type: Number,

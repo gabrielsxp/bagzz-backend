@@ -15,6 +15,10 @@ const ProductColorSchema = mongoose.Schema({
   valueFlutuation: {
     type: Number,
     default: 0
+  },
+  hex: {
+    type: String,
+    required: true
   }
 }, { timestamps: true });
 

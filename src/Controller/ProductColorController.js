@@ -12,6 +12,7 @@ module.exports = {
       'name',
       'description',
       'uri',
+      'hex',
       'valueFlutuation'
     ];
     const body = req.body;
@@ -63,6 +64,7 @@ module.exports = {
       'name',
       'description',
       'uri',
+      'hex',
       'valueFlutuation'
     ];
     const body = req.body;

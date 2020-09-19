@@ -1,10 +1,18 @@
 const Product = require('../Model/Product');
 const Category = require('../Model/Category');
+var parser = require('xml-js');
+const axios = require('axios');
 
 const globalReturn = {
   error: 0,
   data: []
 }
+
+function hashCode(str) {
+  return str.split('').reduce((prevHash, currVal) =>
+    (((prevHash << 5) - prevHash) + currVal.charCodeAt(0)) | 0, 0);
+}
+
 
 module.exports = {
   async create(req, res) {
@@ -26,7 +34,9 @@ module.exports = {
     const valid = Object.keys(body).every(key => validator.includes(key))
     if (valid) {
       try {
-        const product = await Product.create(req.body)
+        const hash = hashCode(req.body.name);
+        const uri = `${req.body.name}_${hash}`;
+        const product = await Product.create({ ...req.body, uri });
         if (product) {
           return res.status(201).send({ ...globalReturn, error: 0, data: { product } });
         } else {
@@ -63,6 +73,18 @@ module.exports = {
         }
       } else {
         return res.status(404).send({ ...globalReturn, error: 1, data: { error: 'Category not found !' } });
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({ ...globalReturn, error: 1, data: { error: 'Unable to get the products list right now' } });
+    }
+  },
+  async indexByName(req, res) {
+    try {
+      const products = await Product.find({ name: req.params.name }).limit(parseInt(req.query.limit)).skip(parseInt((req.query.limit) * (req.query.page - 1))).sort('-updatedAt');
+      console.log('Products found:', products.length)
+      if (products) {
+        return res.status(200).send({ ...globalReturn, data: { products, total: products.length } });
       }
     } catch (error) {
       console.log(error);
@@ -132,4 +154,39 @@ module.exports = {
       return res.status(500).send({ ...globalReturn, error: 1, data: { error: 'Unable to remove this products right now' } });
     }
   },
+  async calculatePostalService(req, res) {
+    console.log(req.body);
+    let data = {
+      postalCodeOrigin: '74223042',
+      postalCodeDestiny: req.body.postalCodeDestiny,
+      x: req.body.x,
+      y: req.body.y,
+      z: req.body.z,
+      weight: req.body.weight
+    }
+    switch (req.body.typeOfService) {
+      case 'SEDEX':
+        data = { ...data, serviceCode: 40010 }
+        break;
+      case 'PAC':
+        data = { ...data, serviceCode: 41106 }
+        break;
+      default:
+        data = { ...data, serviceCode: 41106 }
+        break;
+    }
+    const url = `http://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx?nCdEmpresa=&sDsSenha=&sCepOrigem=${data.postalCodeOrigin}&sCepDestino=${data.postalCodeDestiny}&nVlPeso=${data.weight}&nCdFormato=1&nVlComprimento=${data.z}&nVlAltura=${data.y}&nVlLargura=${data.x}&nVlValorDeclarado=${0}&sCdAvisoRecebimento=n&nCdServico=${data.serviceCode}&nVlDiametro=0&StrRetorno=xml`
+    try {
+      const response = await axios.get(url)
+      const parsed = parser.xml2json(response.data, { compact: true })
+      const rawJson = JSON.parse(parsed).Servicos.cServico
+      let data = Object.keys(rawJson).reduce((acc, current) => {
+        acc[`${current}`] = rawJson[current]._text
+        return acc
+      }, {})
+      return res.status(200).send({ ...globalReturn, data })
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }

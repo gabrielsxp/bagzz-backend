@@ -4,16 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const Product = require('../Model/Product');
 const mongoose = require('mongoose');
-
-var cloudinary = require('cloudinary').v2;
-
-cloudinary.config({
-  cloud_name: 'dwzl1jzpj',
-  api_key: '963981867814849',
-  api_secret: 'yB_YlkZONKYx4YH5QV0Rwbwi5ms'
-});
-
-const CLOUDINARY_URL = 'cloudinary://963981867814849:yB_YlkZONKYx4YH5QV0Rwbwi5ms@dwzl1jzpj'
+const { cloudinary } = require('../config/cloudinary');
 
 const globalResponse = {
   error: 0,

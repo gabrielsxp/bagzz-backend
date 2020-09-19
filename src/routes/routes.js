@@ -26,8 +26,10 @@ router.put('/product/:id', ProductController.change);
 router.get('/products', ProductController.index);
 router.get('/product/:id', ProductController.getOne);
 router.get('/products/:category', ProductController.indexByCategory);
+router.get('/products-search/:name', ProductController.indexByName);
 router.delete('/product/:id', ProductController.remove);
 router.delete('/products', ProductController.clear);
+router.post('/calculate-shipment', ProductController.calculatePostalService);
 // Product Size
 router.post('/product-size', ProductSizeController.create);
 router.put('/product-size/:id', ProductSizeController.change);
@@ -60,6 +62,7 @@ router.delete('/categories', CategoryController.clear);
 router.post('/stock', StockController.create);
 router.put('/stock/:id', StockController.change);
 router.get('/stocks', StockController.index);
+router.get('/product-stocks', StockController.indexOfProduct);
 router.get('/stock/:id', StockController.getOne);
 router.delete('/stock/:id', StockController.remove);
 router.delete('/stocks', StockController.clear);
@@ -71,9 +74,9 @@ router.get('/banner/:id', BannerController.getOne);
 router.delete('/banner/:id', BannerController.remove);
 router.delete('/banners', BannerController.clear);
 // Favorites
-router.post('/favorites/:id', auth, UserController.addToFavorites)
-router.delete('/favorites/:id', auth, UserController.removeFavorite)
-router.get('/favorites', auth, UserController.getListOfFavorites)
+router.post('/favorites/:id', auth, UserController.addToFavorites);
+router.delete('/favorites/:id', auth, UserController.removeFavorite);
+router.get('/favorites', auth, UserController.getListOfFavorites);
 // Shopping Sharts
 router.put('/shopping-chart/:id', auth, ShoppingChartController.change);
 router.get('/shopping-chart', auth, ShoppingChartController.index);
