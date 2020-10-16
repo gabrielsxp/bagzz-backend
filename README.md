@@ -1,46 +1,31 @@
-# Pay me Dude - Back End
+# Bagzz - Back End
 
-<p align="center">
-    <img src="https://github.com/gabrielsxp/paymedude-frontend/blob/master/paymedude.gif" alt="Pay me Dude Landing"></img> 
-</p>
-
-Esta aplicação foi de certa forma baseada no [Patreon](https://patreon.com). 
-
-O Front End dessa aplicação se encontra em [Pay me Dude Front End](https://github.com/gabrielsxp/paymedude-frontend)
+O app dessa aplicação se encontra em [BAGZZ](https://github.com/gabrielsxp/bagzz)
 
 A ideia consiste em compra e venda de produtos muito baratos, por volta de $1 a $2. As entidades do sistema são basicamente os vendedores e os consumidores de contúdo, de modo que um usuário pode ser ambos ao mesmo tempo.
 
 ## Tecnologias Utilizadas
-- HTML5
-- CSS3
+- Styled Components
 - Javascript
-- React JS
-- Redux
+- React Native
 
 ## Funcionalidades
 - Um usuário poderá se cadastrar no sistema
 - Um usuário poderá recuperar sua senha
 - Um usuário poderá logar no sistema
 - Ambos os sistemas de cadastro e login possuem verificação de informações para atestar que os dados são únicos no sistema
-- Cada usuário possui uma Dashboard personalizada
-- Cada usuário possui uma página pública personalizada
-- Cada página personalizada pertence a somente um usuário
-- O usuário poderá customizar as cores de fundo, as bordas e a cor da fonte de sua página
-- Existe uma página principal para os usuários do sistema que são vendedores
-- Na página de todos os vendedores é possível acessar a página exclusiva desse vendedor e se cadastrar para ver os items vendidos pelo mesmo
-- É possível parar de seguir os items vendidos por cada vendedor
-- Existe separação do nível da conta de cada vendedor por níveis, indicados por um plano específico (Em construção...)
-- Na sessão de items a venda, é possível postar items gratuitos e monetizados
-- É possível filtrar por categoria os items vendidos na página principal de items a venda
-- Um usuário só poderá vender no sistema se possuir o nível da conta adequado para tal
-- Cada venda abre o pop-up de checkout de cartões de créditos auditado pela BrainTree
-- Cada venda poderá ser feita através de cartões de crédito e pelo próprio saldo da conta do usuário (Em contrução...)
-- Cada venda é vista no sistema como uma transação. Após cada venda, uma transação é armazenada no banco de dados e é possível
-visualizar todos os dados da mesma na Dashboard
-- É possível gerar relatórios de todas as transações filtradas por intervalos de tempo na Dashboard
-- Um usuário poderá a qualquer momento atualizar o nível da sua conta (Um comprador poderá se tornar vendedor a qualquer momento)
-- Será possível interromper as vendas de cada item (Em construção...)
-- Um vendedor poderá reunir vários items a venda e definir um pacote para a venda desses vários items ao mesmo tempo
+- Cadastro de produtos
+- Cadastro de descontos
+- Cadastro de endereços
+- Cadastro de categorias
+- Cadastro de banners de promoções
+- Carrinho de compras
+- Calculadora de frete integrado aos Correios
+E vários outros endponints para a criação de recursos para a melhor customização da loja
+
+## Todo
+- API de pagamentos 
+- Login com OAuth
 
 ## Instalação
 1. Tenha o npm instalado.
@@ -59,9 +44,7 @@ visualizar todos os dados da mesma na Dashboard
   - MONGOOSE_DB_USER
   - MONGOOSE_DB_PASSWORD
   - MONGOOSE_DB_URL
-2. Tenha uma conta criada na [BrainTree](https://www.braintreepayments.com/) e extraia os seguintes dados da API
-- BRAIN_TREE_MERCHANTID
-- BRAIN_TREE_PUBLICKEY
-- BRAIN_TREE_PRIVATEKEY
-# begzz-api
-# bagzz-backend
+   Configure as variáveis do Cloudinary
+  - CLOUD_NAME
+  - CLOUD_API_KEY
+  - CLOUD_API_SECRET
