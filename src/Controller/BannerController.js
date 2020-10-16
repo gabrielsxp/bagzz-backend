@@ -82,13 +82,13 @@ module.exports = {
     }
     try {
       const banner = await Banner.findById(req.params.id);
-      if (!product) {
+      if (!banner) {
         return res.status(404).send({ ...globalReturn, error: 1, data: { error: 'Unable to find this banner' } });
       }
       const changes = Object.keys(req.body);
-      changes.forEach(update => product[update] = req.body[update]);
+      changes.forEach(update => banner[update] = req.body[update]);
 
-      await product.save();
+      await banner.save();
       return res.send({ ...globalReturn, data: { banner } });
     } catch (error) {
       console.log(error);

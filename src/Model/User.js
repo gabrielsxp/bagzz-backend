@@ -5,14 +5,18 @@ const path = require('path');
 const fs = require('fs');
 
 const UserSchema = mongoose.Schema({
-  username: {
+  name: {
     type: String,
-    required: true,
-    unique: true,
-    validate(value) {
-      value.replace(' ', '-');
-    }
+    required: true
   },
+  // username: {
+  //   type: String,
+  //   required: true,
+  //   unique: true,
+  //   validate(value) {
+  //     value.replace(' ', '-');
+  //   }
+  // },
   email: { type: String, unique: true, required: true },
   password: { type: String, required: true },
   tokens: [{

@@ -3,6 +3,7 @@ const router = new express.Router();
 const auth = require('../middleware/auth');
 const UserController = require('../Controller/UserController');
 const ProductController = require('../Controller/ProductController');
+const DiscountController = require('../Controller/DiscountController');
 const CategoryController = require('../Controller/CategoryController');
 const StockController = require('../Controller/StockController');
 const BannerController = require('../Controller/BannerController');
@@ -17,6 +18,7 @@ const upload = multer(uploadConfig);
 router.post('/signup', UserController.signUp);
 router.post('/signin', UserController.signIn);
 router.post('/user/upload', upload.single('file'), UserController.uploader);
+router.get('/renovate-token', auth, UserController.renovateToken);
 //router.put('/user', auth, UserController.patchUser);
 //router.delete('/user/:id', [upload], UserController.deleteUser)
 
@@ -58,6 +60,15 @@ router.get('/categories', CategoryController.index);
 router.get('/category/:id', CategoryController.getOne);
 router.delete('/category/:id', CategoryController.remove);
 router.delete('/categories', CategoryController.clear);
+// Discounts
+router.post('/discount', DiscountController.create);
+router.put('/discount/:id', DiscountController.change);
+router.get('/discounts', auth, DiscountController.index);
+router.get('/global-discounts', DiscountController.globalIndex);
+router.get('/discount/:id', DiscountController.getOne);
+router.get('/discount-keyword/:keyword', DiscountController.getDiscountByKeyword);
+router.delete('/discount/:id', DiscountController.remove);
+router.delete('/discounts', DiscountController.clear);
 // Stocks
 router.post('/stock', StockController.create);
 router.put('/stock/:id', StockController.change);

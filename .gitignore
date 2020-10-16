@@ -3,3 +3,6 @@
 /uploads
 /src/Model/private.key
 /tmp
+inspectdevport.sh
+startdocker.sh
+.env

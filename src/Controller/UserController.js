@@ -17,27 +17,43 @@ function hashCode(str) {
 }
 
 module.exports = {
+  async renovateToken(req, res) {
+    try {
+      if (req.user) {
+        req.user.tokens = [];
+        await req.user.save();
+        const token = await req.user.generateAuthToken();
+        return res.status(200).send({ ...globalResponse, data: { token } });
+      } else {
+        return res.status(200).send({ ...globalResponse, data: { token: null } });
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(200).send({ ...globalResponse, data: { token: null } });
+    }
+  },
   async signUp(req, res) {
-    const validFields = ['username', 'email', 'password'];
+    const validFields = ['name', 'email', 'password'];
     const fields = Object.keys(req.body);
     const valid = fields.every((field) => validFields.includes(field));
     if (!valid) {
-      return res.status(400).send({ error: 'Invalid Fields !' });
+      return res.status(400).send({ ...globalResponse, error: 1, data: { error: 'Preencha todos os campos !' } });
     }
     try {
-      const user = await User.create(req.body);
+      const username = `${req.body.name}_${hashCode(req.body.email)}`;
+      const user = await User.create({ ...req.body, username });
       if (user) {
         const token = await user.generateAuthToken();
         let data = { ...globalResponse, data: { user, token } }
         // criar e vincular carrinho ao cliente
         const sc = await ShoppingChart.create({ products: [], totalPrice: 0, user: user._id });
         console.log(sc);
-        return res.status(201).send({ data });
+        return res.status(201).send({ ...globalResponse, data });
       } else {
-        return res.status(400).send({ error: 'This email are already in use' });
+        return res.status(400).send({ ...globalResponse, data: { error: 'Esse e-mail já esta em uso ! Escolha outro por favor.' } });
       }
     } catch (error) {
-      return res.status(400).send({ data: { ...globalResponse, error: 1, data: { error: error } } });
+      return res.status(400).send({ ...globalResponse, error: 1, data: { error: error } });
     }
   },
   async addToFavorites(req, res) {
@@ -108,9 +124,9 @@ module.exports = {
     }
   },
   async findUser(req, res) {
-    const username = req.body.username;
+    const email = req.body.email;
     try {
-      const user = await User.findOne({ username });
+      const user = await User.findOne({ email });
       if (!user) {
         return res.send({ user: false });
       }

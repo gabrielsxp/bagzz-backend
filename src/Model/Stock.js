@@ -23,7 +23,11 @@ const StockSchema = mongoose.Schema({
   images: {
     type: [String],
     default: []
-  }
+  },
+  postalX: Number,
+  postalY: Number,
+  postalZ: Number,
+  packageWeight: Number
 }, { timestamps: true });
 
 StockSchema.virtual('product_', {

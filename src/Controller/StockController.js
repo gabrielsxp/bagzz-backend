@@ -14,7 +14,11 @@ module.exports = {
       'color',
       'size',
       'amount',
-      'images'
+      'images',
+      'postalX',
+      'postalY',
+      'postalZ',
+      'packageWeight'
     ];
     const body = req.body;
     const valid = Object.keys(body).every(key => validator.includes(key))
@@ -78,7 +82,11 @@ module.exports = {
       'color',
       'size',
       'amount',
-      'images'
+      'images',
+      'postalX',
+      'postalY',
+      'postalZ',
+      'packageWeight'
     ];
     const body = req.body;
     const valid = Object.keys(body).every(key => validator.includes(key))
