@@ -2,7 +2,7 @@
 
 O app dessa aplicação se encontra em [BAGZZ](https://github.com/gabrielsxp/bagzz)
 
-A ideia consiste em compra e venda de produtos muito baratos, por volta de $1 a $2. As entidades do sistema são basicamente os vendedores e os consumidores de contúdo, de modo que um usuário pode ser ambos ao mesmo tempo.
+App de uma loja virtual desenvolvida em React Native. Possui criação e integração de descontos e integração dos Correios para o cálculo do frete, já baseado no peso total e nas medidas do pacote dos produtos selecionados
 
 ## Tecnologias Utilizadas
 - Styled Components
