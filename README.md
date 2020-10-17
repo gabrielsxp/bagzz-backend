@@ -5,9 +5,8 @@ O app dessa aplicação se encontra em [BAGZZ](https://github.com/gabrielsxp/bag
 App de uma loja virtual desenvolvida em React Native. Possui criação e integração de descontos e integração dos Correios para o cálculo do frete, já baseado no peso total e nas medidas do pacote dos produtos selecionados
 
 ## Tecnologias Utilizadas
-- Styled Components
-- Javascript
-- React Native
+- Node
+- MongoDB
 
 ## Funcionalidades
 - Um usuário poderá se cadastrar no sistema
@@ -30,7 +29,7 @@ E vários outros endponints para a criação de recursos para a melhor customiza
 ## Instalação
 1. Tenha o npm instalado.
 2. Clone o repositório via terminal.
-3. Acesse a pasta de destino via cd project-building-api
+3. Acesse a pasta de destino
 4. Execute sudo npm install
 5. Configure as variáveis de ambiente *
 6. Execute o processo do [MongoDB](https://docs.mongodb.com/manual/)
